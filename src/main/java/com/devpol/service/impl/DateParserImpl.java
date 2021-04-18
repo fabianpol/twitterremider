@@ -20,11 +20,11 @@ public class DateParserImpl implements DateParser {
     @Override
     public Date parseText(String text) throws DateParseException {
         DateGroup dateGroup = parser.parse(text).stream().findFirst().orElse(null);
-        if(dateGroup == null || dateGroup.getDates().size() < 1) {
+        if (dateGroup == null || dateGroup.getDates().size() < 1) {
             throw new DateParseException("Sorry. We couldn't extract the date from text.");
         }
         Date date = dateGroup.getDates().get(0);
-        if(date.before(new Date())) {
+        if (date.before(new Date())) {
             throw new DateParseException("Sorry. Only futures date are supported.");
         }
         return date;

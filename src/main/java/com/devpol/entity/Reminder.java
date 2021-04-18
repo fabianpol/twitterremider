@@ -2,19 +2,23 @@ package com.devpol.entity;
 
 import com.google.common.base.MoreObjects;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name="Reminder")
+@Table(name = "Reminder")
 public class Reminder {
 
-    public Reminder(){
+    // Default constructor required by Hibernate
+    public Reminder() {
     }
 
-    public Reminder(long id, Date date, String user){
+    public Reminder(long id, Date date, String user) {
         this.id = id;
         this.date = Objects.requireNonNull(date);
         this.user = Objects.requireNonNull(user);

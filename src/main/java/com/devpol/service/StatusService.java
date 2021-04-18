@@ -1,14 +1,18 @@
 package com.devpol.service;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.*;
+import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 
 import javax.inject.Singleton;
 
 @Singleton
 public class StatusService {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(StatusService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatusService.class);
 
     public void replyInTheSameThread(long statusId, String message) {
         Twitter twitter = TwitterFactory.getSingleton();
