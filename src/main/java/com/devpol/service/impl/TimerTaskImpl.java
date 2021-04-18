@@ -21,10 +21,10 @@ class TimerServiceImpl implements TimerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimerTask.class);
 
-    private Timer timer;
-    private DateParser dateParser;
-    private StatusService statusService;
-    private ReminderService reminderService;
+    private final Timer timer;
+    private final DateParser dateParser;
+    private final StatusService statusService;
+    private final ReminderService reminderService;
 
     @Inject
     public TimerServiceImpl(DateParser dateParser, StatusService statusService, ReminderService reminderService) {

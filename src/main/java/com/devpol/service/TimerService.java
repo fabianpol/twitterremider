@@ -8,7 +8,6 @@ import java.util.Date;
 
 public interface TimerService {
 
-
     Date scheduleAndSave(Status status) throws DateParseException;
 
     void schedule(Reminder reminder);

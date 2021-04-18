@@ -16,7 +16,7 @@ public class TimerTask extends java.util.TimerTask {
     private String user;
     private StatusService statusService;
 
-    public TimerTask(long statusId, String user, StatusService statusService){
+    public TimerTask(long statusId, String user, StatusService statusService) {
         this.statusId = statusId;
         this.statusService = Objects.requireNonNull(statusService);
         this.user = Objects.requireNonNull(user);
@@ -27,7 +27,7 @@ public class TimerTask extends java.util.TimerTask {
         statusService.replyInTheSameThread(statusId, getMessage());
     }
 
-    private String getMessage(){
+    private String getMessage() {
         int randomIndex = new Random().nextInt(MESSAGE_TEMPLATES.size());
         return String.format(MESSAGE_TEMPLATES.get(randomIndex), user);
     }

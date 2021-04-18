@@ -5,7 +5,9 @@ import com.devpol.service.StatusService;
 import com.devpol.service.TimerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.*;
+import twitter4j.StallWarning;
+import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,7 +30,7 @@ public class StatusListener implements twitter4j.StatusListener {
         LOGGER.info("Detected mention - @{} - {}", user, status.getText());
         try {
             Date scheduled = timerService.scheduleAndSave(status);
-            String message = "Sure, @" + user +". \uD83E\uDD73 I will remind you about this tweet at " + scheduled + ". \uD83D\uDCCB ";
+            String message = "Sure, @" + user + ". \uD83E\uDD73 I will remind you about this tweet at " + scheduled + ". \uD83D\uDCCB ";
             statusService.replyInTheSameThread(status.getId(), message);
         } catch (DateParseException e) {
             statusService.replyInTheSameThread(status.getId(), e.getMessage());
