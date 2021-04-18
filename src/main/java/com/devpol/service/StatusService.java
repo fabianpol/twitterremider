@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
@@ -14,8 +14,14 @@ public class StatusService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusService.class);
 
+    private Twitter twitter;
+
+    @Inject
+    public StatusService(Twitter twitter) {
+        this.twitter = twitter;
+    }
+
     public void replyInTheSameThread(long statusId, String message) {
-        Twitter twitter = TwitterFactory.getSingleton();
         StatusUpdate statusUpdate = new StatusUpdate(message);
         statusUpdate.inReplyToStatusId(statusId);
         sendReply(twitter, statusUpdate);

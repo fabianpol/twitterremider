@@ -18,11 +18,14 @@ public class StatusListener implements twitter4j.StatusListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusListener.class);
 
-    @Inject
     private TimerService timerService;
+    private StatusService statusService;
 
     @Inject
-    private StatusService statusService;
+    public StatusListener(TimerService timerService, StatusService statusService) {
+        this.timerService = timerService;
+        this.statusService = statusService;
+    }
 
     @Override
     public void onStatus(Status status) {
