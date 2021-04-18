@@ -13,7 +13,7 @@ public class DateParserTest {
     private DateParser dateParser = new DateParserImpl();
 
     @Test
-    public void parseText_noDateProvided(){
+    public void parseText_noDateProvided() {
         try {
             dateParser.parseText("text without any date");
             Assertions.fail("Exception was expected");
@@ -23,7 +23,7 @@ public class DateParserTest {
     }
 
     @Test
-    public void parseText_noFutureDate(){
+    public void parseText_noFutureDate() {
         try {
             dateParser.parseText("Yesterday");
             Assertions.fail("Exception was expected");
@@ -33,7 +33,7 @@ public class DateParserTest {
     }
 
     @Test
-    public void parseText(){
+    public void parseText() {
         try {
             Date date = dateParser.parseText("Tomorrow");
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
