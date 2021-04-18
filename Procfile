@@ -1,0 +1,1 @@
+web: java -jar target/twitterremider-0.1.jar
