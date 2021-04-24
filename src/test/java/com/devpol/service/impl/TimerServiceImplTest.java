@@ -38,7 +38,7 @@ public class TimerServiceImplTest {
     public void schedule() throws InterruptedException {
         final String username = "user";
         final long statusId = 1l;
-        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (1000 * 2)), username, 0);
+        Reminder reminder = new Reminder(statusId, 0, new Date(new Date().getTime() + (1000 * 2)), username, 0);
 
         timerService.schedule(reminder);
 
@@ -51,7 +51,7 @@ public class TimerServiceImplTest {
     public void cancel() throws InterruptedException, CancellationReminderException {
         final String username = "user";
         final long statusId = 1l;
-        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (500)), username, 0);
+        Reminder reminder = new Reminder(statusId,0, new Date(new Date().getTime() + (500)), username, 0);
         timerService.schedule(reminder);
         timerService.cancel(statusId, username);
 
@@ -63,7 +63,7 @@ public class TimerServiceImplTest {
     public void cancel_noMatchingTask() {
         final String username = "user";
         final long statusId = 1l;
-        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (500)), username, 0);
+        Reminder reminder = new Reminder(statusId,0, new Date(new Date().getTime() + (500)), username, 0);
         timerService.schedule(reminder);
         try {
             timerService.cancel(2l, username);
@@ -77,7 +77,7 @@ public class TimerServiceImplTest {
     public void cancel_noMatchingUser() {
         final String username = "user";
         final long statusId = 1l;
-        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (500)), username, 0);
+        Reminder reminder = new Reminder(statusId,0, new Date(new Date().getTime() + (500)), username, 0);
         timerService.schedule(reminder);
         try {
             timerService.cancel(statusId, "differentUser");

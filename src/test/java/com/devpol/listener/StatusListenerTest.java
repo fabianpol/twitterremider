@@ -83,7 +83,7 @@ public class StatusListenerTest {
     public void onStatus_cancelReminder() {
         when(status.getText()).thenReturn("@reminder /cancel");
         when(status.getInReplyToStatusId()).thenReturn(2l);
-        when(reminderService.findByRepliedId(2l)).thenReturn(Optional.of(new Reminder(EXAMPLE_STATUS_ID, new Date(), EXAMPLE_USERNAME, 2l)));
+        when(reminderService.findByRepliedId(2l)).thenReturn(Optional.of(new Reminder(EXAMPLE_STATUS_ID, 0l, new Date(), EXAMPLE_USERNAME, 2l)));
         statusListener.onStatus(status);
 
         verify(statusService, times(1)).replyInTheSameThread(eq(EXAMPLE_STATUS_ID), any());

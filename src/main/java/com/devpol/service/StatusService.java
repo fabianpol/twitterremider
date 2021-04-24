@@ -1,5 +1,7 @@
 package com.devpol.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -11,6 +13,8 @@ import javax.inject.Singleton;
 @Singleton
 public class StatusService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatusService.class);
+
     private Twitter twitter;
 
     @Inject
@@ -19,6 +23,7 @@ public class StatusService {
     }
 
     public Status replyInTheSameThread(long statusId, String message) {
+        LOGGER.info("Replying to status [{}] with message [{}] ", statusId, message);
         StatusUpdate statusUpdate = new StatusUpdate(message);
         statusUpdate.inReplyToStatusId(statusId);
         return sendReply(twitter, statusUpdate);
