@@ -18,8 +18,9 @@ public class Reminder {
     public Reminder() {
     }
 
-    public Reminder(long id, Date date, String user, long repliedId) {
+    public Reminder(long id, long parentId, Date date, String user, long repliedId) {
         this.id = id;
+        this.parentId = parentId;
         this.date = Objects.requireNonNull(date);
         this.user = Objects.requireNonNull(user);
         this.repliedId = repliedId;
@@ -28,6 +29,9 @@ public class Reminder {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private long id;
+
+    @Column(name = "parentId")
+    public long parentId;
 
     @NotNull
     @Column(name = "date", nullable = false)
@@ -72,8 +76,17 @@ public class Reminder {
         this.repliedId = repliedId;
     }
 
+    public long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
+    }
+
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("date", date).add("user", user).add("repliedId", repliedId).toString();
+        return MoreObjects.toStringHelper(this).add("id", id).add("date", date)
+                .add("user", user).add("repliedId", repliedId).add("parentId", parentId).toString();
     }
 }

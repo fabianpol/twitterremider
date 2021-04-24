@@ -39,13 +39,13 @@ class TimerServiceImpl implements TimerService {
     @Override
     public Date schedule(Status status) throws DateParseException {
         Date date = dateParser.parseText(status.getText());
-        schedule(status.getId(), status.getUser().getScreenName(), date);
+        schedule(status.getId(), status.getInReplyToStatusId(), status.getUser().getScreenName(), date);
         return date;
     }
 
     @Override
     public void schedule(Reminder reminder) {
-        schedule(reminder.getId(), reminder.getUser(), reminder.getDate());
+        schedule(reminder.getId(), reminder.getParentId(), reminder.getUser(), reminder.getDate());
     }
 
     @Override
@@ -65,9 +65,9 @@ class TimerServiceImpl implements TimerService {
         }
     }
 
-    private void schedule(long statusId, String user, Date date) {
+    private void schedule(long statusId, long parentStatusId, String user, Date date) {
         LOGGER.info("Scheduling timer task. Scheduled date = {}", date);
-        TimerTask timerTask = new TimerTask(statusId, user, statusService);
+        TimerTask timerTask = new TimerTask(statusId, parentStatusId, user, statusService);
         timer.schedule(timerTask, date);
         scheduled.put(statusId, timerTask);
     }

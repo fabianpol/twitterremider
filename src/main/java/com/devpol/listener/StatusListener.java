@@ -39,7 +39,7 @@ public class StatusListener implements twitter4j.StatusListener {
         LOGGER.info("Detected mention - @{} - {}", user, status.getText());
         if (status.getText().contains("/cancel")) {
             cancelReminder(status, user);
-        } else {
+        } else if (!status.isRetweeted()) {
             saveReminder(status, user);
         }
     }
@@ -65,7 +65,7 @@ public class StatusListener implements twitter4j.StatusListener {
             Date scheduled = timerService.schedule(status);
             String message = "Sure, @" + user + ". \uD83E\uDD73 I will remind you about this tweet at " + scheduled + ". \uD83D\uDCCB ";
             Status repliedStatus = statusService.replyInTheSameThread(status.getId(), message);
-            reminderService.save(new Reminder(status.getId(), scheduled, user, repliedStatus.getId()));
+            reminderService.save(new Reminder(status.getId(), status.getInReplyToStatusId(), scheduled, user, repliedStatus.getId()));
         } catch (DateParseException e) {
             LOGGER.warn("Failed to parse tweet: {}", status.getText());
             statusService.replyInTheSameThread(status.getId(), e.getMessage());
