@@ -1,3 +1,6 @@
+[![Build Status](https://www.travis-ci.com/fabianpol/twitterremider.svg?branch=master)](https://www.travis-ci.com/fabianpol/twitterremider)
+[![codecov](https://codecov.io/gh/fabianpol/twitterremider/branch/main/graph/badge.svg?token=uk35F1Zsln)](https://codecov.io/gh/fabianpol/twitterremider)
+
 ## Stack
 - Java 11
 - [Micronaut](https://micronaut.io/)
