@@ -1,9 +1,10 @@
 package com.devpol.service.impl;
 
 import com.devpol.entity.Reminder;
+import com.devpol.exceptions.CancellationReminderException;
 import com.devpol.service.DateParser;
-import com.devpol.service.ReminderService;
 import com.devpol.service.StatusService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -27,23 +28,62 @@ public class TimerServiceImplTest {
     @Mock
     private StatusService statusService;
 
-    @Mock
-    private ReminderService reminderService;
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.timerService = new TimerServiceImpl(dateParser, statusService, reminderService);
+        this.timerService = new TimerServiceImpl(dateParser, statusService);
     }
 
     @Test
     public void schedule() throws InterruptedException {
-        Reminder reminder = new Reminder(1l, new Date(new Date().getTime() + (1000 * 5)), "user");
+        final String username = "user";
+        final long statusId = 1l;
+        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (1000 * 2)), username, 0);
 
         timerService.schedule(reminder);
 
-        verify(statusService, times(0)).replyInTheSameThread(eq(1l), any());
-        TimeUnit.SECONDS.sleep(5);
-        verify(statusService, times(1)).replyInTheSameThread(eq(1l), any());
+        verify(statusService, times(0)).replyInTheSameThread(eq(statusId), any());
+        TimeUnit.SECONDS.sleep(3);
+        verify(statusService, times(1)).replyInTheSameThread(eq(statusId), any());
+    }
+
+    @Test
+    public void cancel() throws InterruptedException, CancellationReminderException {
+        final String username = "user";
+        final long statusId = 1l;
+        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (500)), username, 0);
+        timerService.schedule(reminder);
+        timerService.cancel(statusId, username);
+
+        TimeUnit.SECONDS.sleep(1);
+        verify(statusService, times(0)).replyInTheSameThread(eq(statusId), any());
+    }
+
+    @Test
+    public void cancel_noMatchingTask() {
+        final String username = "user";
+        final long statusId = 1l;
+        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (500)), username, 0);
+        timerService.schedule(reminder);
+        try {
+            timerService.cancel(2l, username);
+            Assertions.fail("Exception expected");
+        } catch (CancellationReminderException e) {
+            Assertions.assertEquals("Failed to cancel reminder. Couldn't find scheduled reminder.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void cancel_noMatchingUser() {
+        final String username = "user";
+        final long statusId = 1l;
+        Reminder reminder = new Reminder(statusId, new Date(new Date().getTime() + (500)), username, 0);
+        timerService.schedule(reminder);
+        try {
+            timerService.cancel(statusId, "differentUser");
+            Assertions.fail("Exception expected");
+        } catch (CancellationReminderException e) {
+            Assertions.assertEquals("Failed to cancel reminder. Username doesn't match.", e.getMessage());
+        }
     }
 }

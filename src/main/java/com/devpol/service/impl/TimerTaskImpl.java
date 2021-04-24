@@ -1,9 +1,9 @@
 package com.devpol.service.impl;
 
 import com.devpol.entity.Reminder;
+import com.devpol.exceptions.CancellationReminderException;
 import com.devpol.exceptions.DateParseException;
 import com.devpol.service.DateParser;
-import com.devpol.service.ReminderService;
 import com.devpol.service.StatusService;
 import com.devpol.service.TimerService;
 import com.devpol.timer.TimerTask;
@@ -14,6 +14,8 @@ import twitter4j.Status;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 
 @Singleton
@@ -24,20 +26,19 @@ class TimerServiceImpl implements TimerService {
     final Timer timer;
     private final DateParser dateParser;
     private final StatusService statusService;
-    private final ReminderService reminderService;
+    private Map<Long, TimerTask> scheduled;
 
     @Inject
-    public TimerServiceImpl(DateParser dateParser, StatusService statusService, ReminderService reminderService) {
+    public TimerServiceImpl(DateParser dateParser, StatusService statusService) {
         this.dateParser = dateParser;
         this.timer = new Timer();
         this.statusService = statusService;
-        this.reminderService = reminderService;
+        this.scheduled = new HashMap<>();
     }
 
     @Override
-    public Date scheduleAndSave(Status status) throws DateParseException {
+    public Date schedule(Status status) throws DateParseException {
         Date date = dateParser.parseText(status.getText());
-        reminderService.save(new Reminder(status.getId(), date, status.getUser().getScreenName()));
         schedule(status.getId(), status.getUser().getScreenName(), date);
         return date;
     }
@@ -47,9 +48,28 @@ class TimerServiceImpl implements TimerService {
         schedule(reminder.getId(), reminder.getUser(), reminder.getDate());
     }
 
+    @Override
+    public void cancel(long statusId, String username) throws CancellationReminderException {
+        if (scheduled.containsKey(statusId)) {
+            TimerTask timerTask = scheduled.get(statusId);
+            if (timerTask.getUser().equals(username)) {
+                scheduled.get(statusId).cancel();
+                LOGGER.info("Timer task with id = {} has been canceled", statusId);
+            } else {
+                LOGGER.info("Failed to cancel timer task with id = {}. Username doesn't match.", statusId);
+                throw new CancellationReminderException("Failed to cancel reminder. Username doesn't match.");
+            }
+        } else {
+            LOGGER.info("Failed to cancel timer task with id = {}. Didn't find matching task.", statusId);
+            throw new CancellationReminderException("Failed to cancel reminder. Couldn't find scheduled reminder.");
+        }
+    }
+
     private void schedule(long statusId, String user, Date date) {
         LOGGER.info("Scheduling timer task. Scheduled date = {}", date);
-        timer.schedule(new TimerTask(statusId, user, statusService), date);
+        TimerTask timerTask = new TimerTask(statusId, user, statusService);
+        timer.schedule(timerTask, date);
+        scheduled.put(statusId, timerTask);
     }
 
 }
