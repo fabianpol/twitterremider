@@ -27,6 +27,10 @@ public class TimerTask extends java.util.TimerTask {
         statusService.replyInTheSameThread(statusId, getMessage());
     }
 
+    public String getUser() {
+        return user;
+    }
+
     private String getMessage() {
         int randomIndex = new Random().nextInt(MESSAGE_TEMPLATES.size());
         return String.format(MESSAGE_TEMPLATES.get(randomIndex), user);

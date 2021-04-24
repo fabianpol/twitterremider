@@ -1,6 +1,8 @@
 package com.devpol.listener;
 
+import com.devpol.entity.Reminder;
 import com.devpol.exceptions.DateParseException;
+import com.devpol.service.ReminderService;
 import com.devpol.service.StatusService;
 import com.devpol.service.TimerService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import twitter4j.Status;
 import twitter4j.User;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -34,10 +37,16 @@ public class StatusListenerTest {
     @Mock
     private User user;
 
+    @Mock
+    private ReminderService reminderService;
+
+    @Mock
+    private Status repliedStatus;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.statusListener = new StatusListener(timerService, statusService);
+        this.statusListener = new StatusListener(timerService, statusService, reminderService);
         when(status.getId()).thenReturn(EXAMPLE_STATUS_ID);
         when(status.getUser()).thenReturn(user);
         when(status.getText()).thenReturn(EXAMPLE_STATUS_TEXT);
@@ -47,11 +56,14 @@ public class StatusListenerTest {
     @Test
     public void onStatus() throws DateParseException {
         Date now = new Date();
-        when(timerService.scheduleAndSave(status)).thenReturn(now);
+        when(timerService.schedule(status)).thenReturn(now);
+        when(statusService.replyInTheSameThread(EXAMPLE_STATUS_ID,
+                "Sure, @" + EXAMPLE_USERNAME + ". \uD83E\uDD73 I will remind you about this tweet at " + now + ". \uD83D\uDCCB ")).thenReturn(repliedStatus);
+        when(repliedStatus.getId()).thenReturn(3l);
 
         statusListener.onStatus(status);
 
-        verify(timerService, times(1)).scheduleAndSave(status);
+        verify(timerService, times(1)).schedule(status);
         verify(statusService, times(1)).replyInTheSameThread(EXAMPLE_STATUS_ID,
                 "Sure, @" + EXAMPLE_USERNAME + ". \uD83E\uDD73 I will remind you about this tweet at " + now + ". \uD83D\uDCCB ");
     }
@@ -59,12 +71,22 @@ public class StatusListenerTest {
     @Test
     public void onStatus_failedToParseDate() throws DateParseException {
         final String failMessage = "Ups..";
-        when(timerService.scheduleAndSave(status)).thenThrow(new DateParseException(failMessage));
+        when(timerService.schedule(status)).thenThrow(new DateParseException(failMessage));
 
         statusListener.onStatus(status);
 
-        verify(timerService, times(1)).scheduleAndSave(status);
+        verify(timerService, times(1)).schedule(status);
         verify(statusService, times(1)).replyInTheSameThread(EXAMPLE_STATUS_ID, failMessage);
+    }
+
+    @Test
+    public void onStatus_cancelReminder() {
+        when(status.getText()).thenReturn("@reminder /cancel");
+        when(status.getInReplyToStatusId()).thenReturn(2l);
+        when(reminderService.findByRepliedId(2l)).thenReturn(Optional.of(new Reminder(EXAMPLE_STATUS_ID, new Date(), EXAMPLE_USERNAME, 2l)));
+        statusListener.onStatus(status);
+
+        verify(statusService, times(1)).replyInTheSameThread(eq(EXAMPLE_STATUS_ID), any());
     }
 
 }
