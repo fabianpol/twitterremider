@@ -8,9 +8,11 @@
 ### How it works
 
 Mention me ([@remind_me_this]) and tell me when should I remind you about the tweet ("in 10 days",  "next month",  "8th of September", [etc].).
+To cancel the reminder, leave a comment under the confirmation tweet with '/cancel' command.
+ 
+<img src="https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/example.png" width="50%" />
 
-<img src="https://github.com/fabianpol/twitterremider/raw/master/assets/example.png" width="50%" />
-
+<img src="https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/cancel.png" width="50%" />
 ___
 
 ## Application details
