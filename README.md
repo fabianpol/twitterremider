@@ -1,6 +1,13 @@
 [![Build Status](https://www.travis-ci.com/fabianpol/twitterremider.svg?branch=master)](https://www.travis-ci.com/fabianpol/twitterremider)
 [![codecov](https://codecov.io/gh/fabianpol/twitterremider/branch/main/graph/badge.svg?token=uk35F1Zsln)](https://codecov.io/gh/fabianpol/twitterremider)
 
+## How it works
+![alt text](https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/example.png "Example usage")
+
+
+
+
+
 ## Stack
 - Java 11
 - [Micronaut](https://micronaut.io/)
