@@ -98,15 +98,21 @@ public class StatusListenerTest {
         when(timerService.schedule(status)).thenReturn(now);
         when(dbReminderService.countByCreationDateAfterAndUser(any(), eq(EXAMPLE_USERNAME))).thenReturn(3l);
         when(dbReminderService.findAllByUsername(EXAMPLE_USERNAME)).thenReturn(ImmutableList.of(r));
+        when(twitterService.isUserBlocked(100l)).thenReturn(false);
         when(user.getId()).thenReturn(100l);
+
         statusListener.onStatus(status);
 
         verify(timerService, times(0)).schedule(status);
         verify(dbReminderService, times(1)).deleteById(r.getId());
-        verify(twitterService, times(1)).deleteTweet(r.getId());
+        verify(twitterService, times(0)).deleteTweet(r.getId());
         verify(timerService, times(1)).cancel(r.getId(), EXAMPLE_USERNAME);
         verify(twitterService, times(1)).blockUser(user.getId());
 
+        r.setRepliedId(0l);
+        statusListener.onStatus(status);
+        verify(twitterService, times(1)).deleteTweet(r.getId());
     }
+
 
 }
