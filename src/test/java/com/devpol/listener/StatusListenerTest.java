@@ -1,10 +1,12 @@
 package com.devpol.listener;
 
 import com.devpol.entity.Reminder;
+import com.devpol.exceptions.CancellationReminderException;
 import com.devpol.exceptions.DateParseException;
-import com.devpol.service.ReminderService;
-import com.devpol.service.StatusService;
+import com.devpol.service.DbReminderService;
+import com.devpol.service.TwitterService;
 import com.devpol.service.TimerService;
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,7 +31,7 @@ public class StatusListenerTest {
     private TimerService timerService;
 
     @Mock
-    private StatusService statusService;
+    private TwitterService twitterService;
 
     @Mock
     private Status status;
@@ -38,7 +40,7 @@ public class StatusListenerTest {
     private User user;
 
     @Mock
-    private ReminderService reminderService;
+    private DbReminderService dbReminderService;
 
     @Mock
     private Status repliedStatus;
@@ -46,7 +48,7 @@ public class StatusListenerTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.statusListener = new StatusListener(timerService, statusService, reminderService);
+        this.statusListener = new StatusListener(timerService, twitterService, dbReminderService);
         when(status.getId()).thenReturn(EXAMPLE_STATUS_ID);
         when(status.getUser()).thenReturn(user);
         when(status.getText()).thenReturn(EXAMPLE_STATUS_TEXT);
@@ -57,14 +59,14 @@ public class StatusListenerTest {
     public void onStatus() throws DateParseException {
         Date now = new Date();
         when(timerService.schedule(status)).thenReturn(now);
-        when(statusService.replyInTheSameThread(EXAMPLE_STATUS_ID,
+        when(twitterService.replyInTheSameThread(EXAMPLE_STATUS_ID,
                 "Sure, @" + EXAMPLE_USERNAME + ". \uD83E\uDD73 I will remind you about this tweet at " + now + ". \uD83D\uDCCB ")).thenReturn(repliedStatus);
         when(repliedStatus.getId()).thenReturn(3l);
 
         statusListener.onStatus(status);
 
         verify(timerService, times(1)).schedule(status);
-        verify(statusService, times(1)).replyInTheSameThread(EXAMPLE_STATUS_ID,
+        verify(twitterService, times(1)).replyInTheSameThread(EXAMPLE_STATUS_ID,
                 "Sure, @" + EXAMPLE_USERNAME + ". \uD83E\uDD73 I will remind you about this tweet at " + now + ". \uD83D\uDCCB ");
     }
 
@@ -76,17 +78,35 @@ public class StatusListenerTest {
         statusListener.onStatus(status);
 
         verify(timerService, times(1)).schedule(status);
-        verify(statusService, times(1)).replyInTheSameThread(EXAMPLE_STATUS_ID, failMessage);
+        verify(twitterService, times(0)).replyInTheSameThread(eq(EXAMPLE_STATUS_ID), any());
     }
 
     @Test
     public void onStatus_cancelReminder() {
         when(status.getText()).thenReturn("@reminder /cancel");
         when(status.getInReplyToStatusId()).thenReturn(2l);
-        when(reminderService.findByRepliedId(2l)).thenReturn(Optional.of(new Reminder(EXAMPLE_STATUS_ID, 0l, new Date(), EXAMPLE_USERNAME, 2l)));
+        when(dbReminderService.findByRepliedId(2l)).thenReturn(Optional.of(new Reminder(EXAMPLE_STATUS_ID, 0l, new Date(), EXAMPLE_USERNAME, 2l)));
         statusListener.onStatus(status);
 
-        verify(statusService, times(1)).replyInTheSameThread(eq(EXAMPLE_STATUS_ID), any());
+        verify(twitterService, times(1)).replyInTheSameThread(eq(EXAMPLE_STATUS_ID), any());
+    }
+
+    @Test
+    public void onStatus_handleSPAM() throws DateParseException, CancellationReminderException {
+        Date now = new Date();
+        Reminder r = new Reminder();
+        when(timerService.schedule(status)).thenReturn(now);
+        when(dbReminderService.countByCreationDateAfterAndUser(any(), eq(EXAMPLE_USERNAME))).thenReturn(3l);
+        when(dbReminderService.findAllByUsername(EXAMPLE_USERNAME)).thenReturn(ImmutableList.of(r));
+        when(user.getId()).thenReturn(100l);
+        statusListener.onStatus(status);
+
+        verify(timerService, times(0)).schedule(status);
+        verify(dbReminderService, times(1)).deleteById(r.getId());
+        verify(twitterService, times(1)).deleteTweet(r.getId());
+        verify(timerService, times(1)).cancel(r.getId(), EXAMPLE_USERNAME);
+        verify(twitterService, times(1)).blockUser(user.getId());
+
     }
 
 }

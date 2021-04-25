@@ -1,6 +1,6 @@
 package com.devpol.timer;
 
-import com.devpol.service.StatusService;
+import com.devpol.service.TwitterService;
 import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +19,19 @@ public class TimerTask extends java.util.TimerTask {
     private long statusId;
     private long parentStatusId;
     private String user;
-    private StatusService statusService;
+    private TwitterService twitterService;
 
-    public TimerTask(long statusId, long parentStatusId, String user, StatusService statusService) {
+    public TimerTask(long statusId, long parentStatusId, String user, TwitterService twitterService) {
         this.statusId = statusId;
         this.parentStatusId = parentStatusId;
-        this.statusService = Objects.requireNonNull(statusService);
+        this.twitterService = Objects.requireNonNull(twitterService);
         this.user = Objects.requireNonNull(user);
     }
 
     @Override
     public void run() {
         LOGGER.info("Executing scheduled task for id = {}", statusId);
-        statusService.replyInTheSameThread(statusId, getMessage());
+        twitterService.replyInTheSameThread(statusId, getMessage());
     }
 
     public String getUser() {

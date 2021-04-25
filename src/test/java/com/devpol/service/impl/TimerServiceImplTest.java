@@ -3,7 +3,7 @@ package com.devpol.service.impl;
 import com.devpol.entity.Reminder;
 import com.devpol.exceptions.CancellationReminderException;
 import com.devpol.service.DateParser;
-import com.devpol.service.StatusService;
+import com.devpol.service.TwitterService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,12 +26,12 @@ public class TimerServiceImplTest {
     private DateParser dateParser;
 
     @Mock
-    private StatusService statusService;
+    private TwitterService twitterService;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.timerService = new TimerServiceImpl(dateParser, statusService);
+        this.timerService = new TimerServiceImpl(dateParser, twitterService);
     }
 
     @Test
@@ -42,9 +42,9 @@ public class TimerServiceImplTest {
 
         timerService.schedule(reminder);
 
-        verify(statusService, times(0)).replyInTheSameThread(eq(statusId), any());
+        verify(twitterService, times(0)).replyInTheSameThread(eq(statusId), any());
         TimeUnit.SECONDS.sleep(3);
-        verify(statusService, times(1)).replyInTheSameThread(eq(statusId), any());
+        verify(twitterService, times(1)).replyInTheSameThread(eq(statusId), any());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class TimerServiceImplTest {
         timerService.cancel(statusId, username);
 
         TimeUnit.SECONDS.sleep(1);
-        verify(statusService, times(0)).replyInTheSameThread(eq(statusId), any());
+        verify(twitterService, times(0)).replyInTheSameThread(eq(statusId), any());
     }
 
     @Test
