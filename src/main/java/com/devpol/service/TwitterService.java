@@ -42,7 +42,7 @@ public class TwitterService {
             twitter.destroyStatus(id);
             LOGGER.info("Destroying status with id = {}", id);
         } catch (TwitterException e) {
-            LOGGER.error("Failed to block user");
+            LOGGER.error("Failed to delete tweet with id = {}", id, e);
         }
     }
 
@@ -51,7 +51,7 @@ public class TwitterService {
             twitter.users().createBlock(id);
             LOGGER.info("User with id = {} has been blocked", id);
         } catch (TwitterException e) {
-            LOGGER.error("Failed to block user");
+            LOGGER.error("Failed to block user with id = {}", id, e);
         }
     }
 }
