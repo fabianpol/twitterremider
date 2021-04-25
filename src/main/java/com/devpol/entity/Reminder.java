@@ -33,7 +33,7 @@ public class Reminder {
     private long id;
 
     @Column(name = "parentId")
-    public long parentId;
+    public Long parentId;
 
     @NotNull
     @Column(name = "date", nullable = false)
@@ -82,11 +82,11 @@ public class Reminder {
         this.repliedId = repliedId;
     }
 
-    public long getParentId() {
+    public Long getParentId() {
         return parentId;
     }
 
-    public void setParentId(long parentId) {
+    public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
 
