@@ -1,7 +1,7 @@
 package com.devpol.service.impl;
 
 import com.devpol.entity.Reminder;
-import com.devpol.service.ReminderService;
+import com.devpol.service.DbReminderService;
 import com.google.common.collect.Lists;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Assertions;
@@ -17,32 +17,32 @@ public class ReminderServiceImplTest {
     private final Reminder oldReminder = new Reminder(99l, 1l, new Date(), "author", 2l);
     private final Reminder newReminder = new Reminder(999l, 9l, customDate(1), "author2", 8l);
 
-    private ReminderService reminderService;
+    private DbReminderService dbReminderService;
 
     @Inject
-    public ReminderServiceImplTest(ReminderService reminderService) {
-        this.reminderService = reminderService;
+    public ReminderServiceImplTest(DbReminderService dbReminderService) {
+        this.dbReminderService = dbReminderService;
     }
 
     @Test
     void findAllFutureReminders() {
-        reminderService.save(oldReminder);
-        reminderService.save(newReminder);
-        List<Reminder> reminders = Lists.newArrayList(reminderService.findAllFutureReminders());
+        dbReminderService.save(oldReminder);
+        dbReminderService.save(newReminder);
+        List<Reminder> reminders = Lists.newArrayList(dbReminderService.findAllFutureReminders());
         Assertions.assertEquals(1, reminders.size());
     }
 
     @Test
     void findByRepliedId() {
-        reminderService.save(newReminder);
-        Assertions.assertEquals(newReminder, reminderService.findByRepliedId(newReminder.getRepliedId()).get());
+        dbReminderService.save(newReminder);
+        Assertions.assertEquals(newReminder, dbReminderService.findByRepliedId(newReminder.getRepliedId()).get());
     }
 
     @Test
     void deleteById() {
-        reminderService.save(newReminder);
-        reminderService.deleteById(newReminder.getId());
-        List<Reminder> reminders = Lists.newArrayList(reminderService.findAllFutureReminders());
+        dbReminderService.save(newReminder);
+        dbReminderService.deleteById(newReminder.getId());
+        List<Reminder> reminders = Lists.newArrayList(dbReminderService.findAllFutureReminders());
         Assertions.assertEquals(0, reminders.size());
     }
 

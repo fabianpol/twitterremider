@@ -1,7 +1,7 @@
 package com.devpol.activator;
 
 import com.devpol.entity.Reminder;
-import com.devpol.service.ReminderService;
+import com.devpol.service.DbReminderService;
 import com.devpol.service.TimerService;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class ActivatorTest {
 
     @Mock
-    private ReminderService reminderService;
+    private DbReminderService dbReminderService;
 
     @Mock
     private TimerService timerService;
@@ -29,8 +29,8 @@ public class ActivatorTest {
     @Test
     public void verifyAllRemindersAreScheduled() {
         List<Reminder> reminders = ImmutableList.of(new Reminder(), new Reminder());
-        when(reminderService.findAllFutureReminders()).thenReturn(reminders);
-        new Activator(reminderService, timerService);
+        when(dbReminderService.findAllFutureReminders()).thenReturn(reminders);
+        new Activator(dbReminderService, timerService);
 
         verify(timerService, times(2)).schedule(any(Reminder.class));
 

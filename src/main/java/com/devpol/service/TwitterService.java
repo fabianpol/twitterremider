@@ -11,14 +11,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class StatusService {
+public class TwitterService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatusService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TwitterService.class);
 
     private Twitter twitter;
 
     @Inject
-    public StatusService(Twitter twitter) {
+    public TwitterService(Twitter twitter) {
         this.twitter = twitter;
     }
 
@@ -34,6 +34,24 @@ public class StatusService {
             return twitter.updateStatus(statusUpdate);
         } catch (TwitterException e) {
             throw new RuntimeException("Failed to send reply", e);
+        }
+    }
+
+    public void deleteTweet(long id) {
+        try {
+            twitter.destroyStatus(id);
+            LOGGER.info("Destroying status with id = {}", id);
+        } catch (TwitterException e) {
+            LOGGER.error("Failed to block user");
+        }
+    }
+
+    public void blockUser(long id)  {
+        try {
+            twitter.users().createBlock(id);
+            LOGGER.info("User with id = {} has been blocked", id);
+        } catch (TwitterException e) {
+            LOGGER.error("Failed to block user");
         }
     }
 }

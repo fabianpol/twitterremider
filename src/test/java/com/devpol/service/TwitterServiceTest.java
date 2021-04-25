@@ -12,9 +12,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class StatusServiceTest {
+public class TwitterServiceTest {
 
-    private StatusService statusService;
+    private TwitterService twitterService;
 
     @Mock
     private Twitter twitter;
@@ -22,7 +22,7 @@ public class StatusServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.statusService = new StatusService(twitter);
+        this.twitterService = new TwitterService(twitter);
     }
 
     @Test
@@ -30,7 +30,7 @@ public class StatusServiceTest {
         final long id = 1l;
         final String message = "This is the reminder.";
 
-        statusService.replyInTheSameThread(id, message);
+        twitterService.replyInTheSameThread(id, message);
         StatusUpdate update = new StatusUpdate(message);
         update.inReplyToStatusId(id);
 

@@ -4,7 +4,7 @@ import com.devpol.entity.Reminder;
 import com.devpol.exceptions.CancellationReminderException;
 import com.devpol.exceptions.DateParseException;
 import com.devpol.service.DateParser;
-import com.devpol.service.StatusService;
+import com.devpol.service.TwitterService;
 import com.devpol.service.TimerService;
 import com.devpol.timer.TimerTask;
 import org.slf4j.Logger;
@@ -25,14 +25,14 @@ class TimerServiceImpl implements TimerService {
 
     final Timer timer;
     private final DateParser dateParser;
-    private final StatusService statusService;
+    private final TwitterService twitterService;
     private Map<Long, TimerTask> scheduled;
 
     @Inject
-    public TimerServiceImpl(DateParser dateParser, StatusService statusService) {
+    public TimerServiceImpl(DateParser dateParser, TwitterService twitterService) {
         this.dateParser = dateParser;
         this.timer = new Timer();
-        this.statusService = statusService;
+        this.twitterService = twitterService;
         this.scheduled = new HashMap<>();
     }
 
@@ -67,7 +67,7 @@ class TimerServiceImpl implements TimerService {
 
     private void schedule(long statusId, long parentStatusId, String user, Date date) {
         LOGGER.info("Scheduling timer task. Scheduled date = {}", date);
-        TimerTask timerTask = new TimerTask(statusId, parentStatusId, user, statusService);
+        TimerTask timerTask = new TimerTask(statusId, parentStatusId, user, twitterService);
         timer.schedule(timerTask, date);
         scheduled.put(statusId, timerTask);
     }

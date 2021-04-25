@@ -1,6 +1,7 @@
 package com.devpol.entity;
 
 import com.google.common.base.MoreObjects;
+import io.micronaut.data.annotation.DateCreated;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,6 +25,7 @@ public class Reminder {
         this.date = Objects.requireNonNull(date);
         this.user = Objects.requireNonNull(user);
         this.repliedId = repliedId;
+        this.creationDate = new Date();
     }
 
     @Id
@@ -43,6 +45,10 @@ public class Reminder {
 
     @Column(name = "repliedId")
     public long repliedId;
+
+    @NotNull
+    @Column(name = "creationDate", nullable = false)
+    public Date creationDate;
 
     public long getId() {
         return id;
@@ -84,9 +90,18 @@ public class Reminder {
         this.parentId = parentId;
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("id", id).add("date", date)
-                .add("user", user).add("repliedId", repliedId).add("parentId", parentId).toString();
+                .add("user", user).add("repliedId", repliedId).add("parentId", parentId)
+                .add("creationDate", creationDate).toString();
     }
 }
