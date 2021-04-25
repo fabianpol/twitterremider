@@ -1,5 +1,6 @@
 package com.devpol.service;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
@@ -9,6 +10,9 @@ import twitter4j.TwitterException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.LongStream;
 
 @Singleton
 public class TwitterService {
@@ -42,7 +46,7 @@ public class TwitterService {
             twitter.destroyStatus(id);
             LOGGER.info("Destroying status with id = {}", id);
         } catch (TwitterException e) {
-            LOGGER.error("Failed to block user");
+            LOGGER.error("Failed to delete tweet with id = {}", id, e);
         }
     }
 
@@ -51,7 +55,17 @@ public class TwitterService {
             twitter.users().createBlock(id);
             LOGGER.info("User with id = {} has been blocked", id);
         } catch (TwitterException e) {
-            LOGGER.error("Failed to block user");
+            LOGGER.error("Failed to block user with id = {}", id, e);
         }
+    }
+
+    public boolean isUserBlocked(long id) {
+        try {
+            return Arrays.asList(ArrayUtils.toObject(twitter.users().getBlocksIDs().getIDs())).contains(id);
+        } catch (TwitterException e) {
+            LOGGER.error("Failed to check is user blocked", e);
+            return false;
+        }
+
     }
 }

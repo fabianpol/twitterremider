@@ -1,9 +1,12 @@
 package com.devpol.service;
 
+import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import twitter4j.IDs;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -21,6 +24,9 @@ public class TwitterServiceTest {
 
     @Mock
     private UsersResources users;
+
+    @Mock
+    private IDs ids;
 
     @BeforeEach
     public void setup() {
@@ -53,6 +59,16 @@ public class TwitterServiceTest {
         final long id = 1l;
         twitterService.blockUser(id);
         verify(users, times(1)).createBlock(id);
+    }
+
+    @Test
+    public void isUserBlocked() throws TwitterException {
+        long[] blocked = {1l};
+        when(twitter.users()).thenReturn(users);
+        when(users.getBlocksIDs()).thenReturn(ids);
+        when(ids.getIDs()).thenReturn(blocked);
+        Assertions.assertEquals(true, twitterService.isUserBlocked(1l));
+        Assertions.assertEquals(false, twitterService.isUserBlocked(3l));
     }
 
 }

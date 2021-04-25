@@ -39,7 +39,7 @@ public class StatusListener implements twitter4j.StatusListener {
         LOGGER.info("Detected mention - @{} - {}", user, status.getText());
         if (status.getText().contains("/cancel")) {
             cancelReminder(status, user);
-        } else if (!status.isRetweeted()) {
+        } else if (!twitterService.isUserBlocked(status.getUser().getId()) && !status.isRetweeted()) {
             if (isSpamDetected(user)) {
                 handleSpam(status);
             } else {
@@ -54,7 +54,9 @@ public class StatusListener implements twitter4j.StatusListener {
         twitterService.blockUser(status.getUser().getId());
         for (Reminder r : dbReminderService.findAllByUsername(user)) {
             dbReminderService.deleteById(r.getId());
-            twitterService.deleteTweet(r.getRepliedId());
+            if (r.getRepliedId() != null) {
+                twitterService.deleteTweet(r.getRepliedId());
+            }
             try {
                 timerService.cancel(r.getId(), user);
             } catch (CancellationReminderException e) {
