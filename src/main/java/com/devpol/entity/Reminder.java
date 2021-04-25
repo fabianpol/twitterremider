@@ -44,7 +44,7 @@ public class Reminder {
     public String user;
 
     @Column(name = "repliedId")
-    public long repliedId;
+    public Long repliedId;
 
     @NotNull
     @Column(name = "creationDate", nullable = false)
@@ -74,11 +74,11 @@ public class Reminder {
         this.user = user;
     }
 
-    public long getRepliedId() {
+    public Long getRepliedId() {
         return repliedId;
     }
 
-    public void setRepliedId(long repliedId) {
+    public void setRepliedId(Long repliedId) {
         this.repliedId = repliedId;
     }
 
