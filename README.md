@@ -9,9 +9,13 @@
 
 Mention me ([@remind_me_this]) and tell me when should I remind you about the tweet ("in 10 days",  "next month",  "8th of September", [etc].).
 
-<img src="https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/example.png" width="50%" />
+<img src="https://github.com/fabianpol/twitterremider/raw/master/assets/example.png" width="50%" />
 
-### Stack
+___
+
+## Application details
+
+### Technology stack
 - Java 11
 - [Micronaut](https://micronaut.io/)
 - [H2](https://www.h2database.com/html/main.html) / [Postgresql](https://www.postgresql.org/)
