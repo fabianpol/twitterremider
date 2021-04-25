@@ -2,11 +2,12 @@
 [![codecov](https://codecov.io/gh/fabianpol/twitterremider/branch/main/graph/badge.svg?token=uk35F1Zsln)](https://codecov.io/gh/fabianpol/twitterremider)
 
 ## How it works
-![alt text](https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/example.png "Example usage")
 
+🤖 Twitter bot allows you to set reminders for tweets. 🤖
 
+Mention me ([@remind_me_this]) and tell me when should I remind you about the tweet ("in 10 days",  "next month",  "8th of September", etc.).
 
-
+<img src="https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/example.png" width="50%" />
 
 ## Stack
 - Java 11
@@ -37,3 +38,5 @@ By setting the following environment variables, it can also use Postgresql.
 `JDBC_USER` - i.e. postgres
 
 `JDBC_PASSWORD` - i.e. postgre
+
+[@remind_me_this]: https://twitter.com/remind_me_this
