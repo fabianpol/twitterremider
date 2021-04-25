@@ -7,10 +7,10 @@ import org.mockito.MockitoAnnotations;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.api.UsersResources;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class TwitterServiceTest {
 
@@ -18,6 +18,9 @@ public class TwitterServiceTest {
 
     @Mock
     private Twitter twitter;
+
+    @Mock
+    private UsersResources users;
 
     @BeforeEach
     public void setup() {
@@ -35,6 +38,21 @@ public class TwitterServiceTest {
         update.inReplyToStatusId(id);
 
         verify(twitter, times(1)).updateStatus(eq(update));
+    }
+
+    @Test
+    public void deleteTweet() throws TwitterException {
+        final long id = 1l;
+        twitterService.deleteTweet(id);
+        verify(twitter, times(1)).destroyStatus(id);
+    }
+
+    @Test
+    public void blockUser() throws TwitterException {
+        when(twitter.users()).thenReturn(users);
+        final long id = 1l;
+        twitterService.blockUser(id);
+        verify(users, times(1)).createBlock(id);
     }
 
 }

@@ -1,10 +1,12 @@
 package com.devpol.listener;
 
 import com.devpol.entity.Reminder;
+import com.devpol.exceptions.CancellationReminderException;
 import com.devpol.exceptions.DateParseException;
 import com.devpol.service.DbReminderService;
 import com.devpol.service.TwitterService;
 import com.devpol.service.TimerService;
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -87,6 +89,24 @@ public class StatusListenerTest {
         statusListener.onStatus(status);
 
         verify(twitterService, times(1)).replyInTheSameThread(eq(EXAMPLE_STATUS_ID), any());
+    }
+
+    @Test
+    public void onStatus_handleSPAM() throws DateParseException, CancellationReminderException {
+        Date now = new Date();
+        Reminder r = new Reminder();
+        when(timerService.schedule(status)).thenReturn(now);
+        when(dbReminderService.countByCreationDateAfterAndUser(any(), eq(EXAMPLE_USERNAME))).thenReturn(3l);
+        when(dbReminderService.findAllByUsername(EXAMPLE_USERNAME)).thenReturn(ImmutableList.of(r));
+        when(user.getId()).thenReturn(100l);
+        statusListener.onStatus(status);
+
+        verify(timerService, times(0)).schedule(status);
+        verify(dbReminderService, times(1)).deleteById(r.getId());
+        verify(twitterService, times(1)).deleteTweet(r.getId());
+        verify(timerService, times(1)).cancel(r.getId(), EXAMPLE_USERNAME);
+        verify(twitterService, times(1)).blockUser(user.getId());
+
     }
 
 }

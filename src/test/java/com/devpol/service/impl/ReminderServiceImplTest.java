@@ -15,7 +15,7 @@ import java.util.List;
 public class ReminderServiceImplTest {
 
     private final Reminder oldReminder = new Reminder(99l, 1l, new Date(), "author", 2l);
-    private final Reminder newReminder = new Reminder(999l, 9l, customDate(1), "author2", 8l);
+    private final Reminder newReminder = new Reminder(999l, 9l, customDate(60), "author2", 8l);
 
     private DbReminderService dbReminderService;
 
@@ -46,9 +46,28 @@ public class ReminderServiceImplTest {
         Assertions.assertEquals(0, reminders.size());
     }
 
+    @Test
+    void countByCreationDateAfterAndUser() {
+        Reminder beforeSpamDetection = new Reminder(999l, 9l, customDate(-16), "author", 8l);
+        beforeSpamDetection.setCreationDate(customDate(-16));
+        dbReminderService.save(oldReminder);
+        dbReminderService.save(beforeSpamDetection);
+        long count = dbReminderService.countByCreationDateAfterAndUser(customDate(-15), "author");
+        Assertions.assertEquals(1, count);
+    }
 
-    private Date customDate(int hours) {
-        return new Date(new Date().getTime() + hours * 1000 * 60 * 60);
+    @Test
+    void findAllByUsername() {
+        dbReminderService.save(oldReminder);
+        dbReminderService.save(newReminder);
+
+        List<Reminder> reminders = Lists.newArrayList(dbReminderService.findAllByUsername("author"));
+        Assertions.assertEquals(1, reminders.size());
+        Assertions.assertEquals(oldReminder, reminders.get(0));
+    }
+
+    private Date customDate(int minutes) {
+        return new Date(new Date().getTime() + minutes * 1000 * 60);
     }
 
 }

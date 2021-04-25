@@ -64,9 +64,9 @@ public class StatusListener implements twitter4j.StatusListener {
     }
 
     private boolean isSpamDetected(String user) {
-        Date date = DateUtils.addMinutes(new Date(), -15);
+        Date date = DateUtils.addMinutes(new Date(), -10);
         long times = dbReminderService.countByCreationDateAfterAndUser(date, user);
-        return times > 3;
+        return times > 2;
     }
 
     private void cancelReminder(Status status, String user) {
@@ -84,7 +84,6 @@ public class StatusListener implements twitter4j.StatusListener {
 
 
     private void saveReminder(Status status, String user) {
-
         try {
             Date scheduled = timerService.schedule(status);
             String message = "Sure, @" + user + ". \uD83E\uDD73 I will remind you about this tweet at " + scheduled + ". \uD83D\uDCCB ";
