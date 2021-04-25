@@ -1,24 +1,26 @@
 [![Build Status](https://www.travis-ci.com/fabianpol/twitterremider.svg?branch=master)](https://www.travis-ci.com/fabianpol/twitterremider)
-[![codecov](https://codecov.io/gh/fabianpol/twitterremider/branch/main/graph/badge.svg?token=uk35F1Zsln)](https://codecov.io/gh/fabianpol/twitterremider)
+[![codecov](https://codecov.io/gh/fabianpol/twitterremider/branch/master/graph/badge.svg?token=uk35F1Zsln)](https://codecov.io/gh/fabianpol/twitterremider)
 
-## How it works
+### Goal
 
 🤖 Twitter bot allows you to set reminders for tweets. 🤖
+
+### How it works
 
 Mention me ([@remind_me_this]) and tell me when should I remind you about the tweet ("in 10 days",  "next month",  "8th of September", etc.).
 
 <img src="https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/example.png" width="50%" />
 
-## Stack
+### Stack
 - Java 11
 - [Micronaut](https://micronaut.io/)
 - [H2](https://www.h2database.com/html/main.html) / [Postgresql](https://www.postgresql.org/)
 - [Hibernate](https://hibernate.org/)
 - [natty](http://natty.joestelmach.com/) - natural language date parser
 
-## Configuration
-### Environment variables
-#### Twitter configuration
+### Configuration
+#### Environment variables
+##### Twitter configuration
 `twitter4j.oauth.accessToken`
 
 `twitter4j.oauth.accessTokenSecret`
@@ -27,7 +29,7 @@ Mention me ([@remind_me_this]) and tell me when should I remind you about the tw
 
 `twitter4j.oauth.consumerSecret`
 
-#### Database configuration
+##### Database configuration
 By default, the application is using build-in H2 memory based database.
 By setting the following environment variables, it can also use Postgresql.
 
