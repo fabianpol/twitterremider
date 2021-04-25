@@ -7,7 +7,7 @@
 
 ### How it works
 
-Mention me ([@remind_me_this]) and tell me when should I remind you about the tweet ("in 10 days",  "next month",  "8th of September", etc.).
+Mention me ([@remind_me_this]) and tell me when should I remind you about the tweet ("in 10 days",  "next month",  "8th of September", [etc].).
 
 <img src="https://github.com/fabianpol/twitterremider/raw/improve-readme/assets/example.png" width="50%" />
 
@@ -42,3 +42,4 @@ By setting the following environment variables, it can also use Postgresql.
 `JDBC_PASSWORD` - i.e. postgre
 
 [@remind_me_this]: https://twitter.com/remind_me_this
+[etc]: http://natty.joestelmach.com/doc.jsp
